@@ -5,7 +5,11 @@ from bs4 import BeautifulSoup
 from random import randint
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
+<<<<<<< HEAD
 vk_session = vk_api.VkApi(token='e77578a5c80bd6b4f8acfd48d877821dccc2443944942206420fcadc7bfb6c77744b5ebcde0cacf386fd3')
+=======
+vk_session = vk_api.VkApi(token='')
+>>>>>>> 434744fcb471ab44dc8a7a6fb5e7c225cfa79b83
 longpoll = VkLongPoll(vk_session)
 p=1
 Exit = False
