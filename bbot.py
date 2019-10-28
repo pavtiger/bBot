@@ -14,25 +14,33 @@ Exit = False
 City = ''
 greetings = ['привет', 'ку', 'здорово', 'здравствуй']
 user_old = dict()
+read = False
 def send(mess):
     vk.messages.send(
         user_id=event.user_id,
         keyboard=StartKeyboard.get_keyboard(),
         message=mess, random_id=randint(0, 214748647))
 
+hometask = {}
 
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
         event.text = event.text.lower()
+        if read == True:
+            text = event.text.split(';')
+            send(text[0])
+            hometask[text[0]] = text[1]
+            
         if event.text == 'start' or event.text == 'начать' or event.text == 'начало':
             event.text=event.text.lower()
             vk = vk_session.get_api()
             StartKeyboard = VkKeyboard(one_time=True)
             StartKeyboard.add_button('Поменять Настройки', color=VkKeyboardColor.NEGATIVE)
-            StartKeyboard.add_button('Добавить ДЗ', color=VkKeyboardColor.POSITIVE)
+            StartKeyboard.add_button('добавить дз', color=VkKeyboardColor.POSITIVE)
             send('йоу')
-        elif event.text == "Добавить ДЗ":
-            send("<subject> txt")
+        elif event.text == "добавить дз":
+            send("<subject>; txt")
+            read = True;
         else:
-            send("error")
+            send("errorr")
