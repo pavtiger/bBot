@@ -6,7 +6,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
 import pandas as pd
 
-vk_session = vk_api.VkApi(token="")
+vk_session = vk_api.VkApi(token='')
 longpoll = VkLongPoll(vk_session)
 p=1
 Exit = False
@@ -19,14 +19,12 @@ def send(mess):
         keyboard=StartKeyboard.get_keyboard(),
         message=mess, random_id=randint(0, 214748647))
 
-# hometask = {}
 sub = ''
 task = ''
 arr_task = ['0', '0', '0']
 date = ''
-d = {'done': [], 'date': [], 'sub': [], 'task': []}
+d = {'done': [0], 'date': [0], 'sub': [0], 'task': [0]}
 df = pd.DataFrame(data=d)
-print(df)
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
@@ -34,7 +32,7 @@ for event in longpoll.listen():
         if arr_task == ['6', '6', '6']:
             send("вот это повезло")
                 
-        if inputt == 1:
+        if inputt == 1: # урок
             inputt += 1
             sub = event.text
             StartKeyboard = VkKeyboard(one_time=True)
@@ -44,7 +42,7 @@ for event in longpoll.listen():
                 StartKeyboard.add_button('правило', color=VkKeyboardColor.DEFAULT)
             send("<задание>")
             
-        elif inputt == 2:
+        elif inputt == 2 or inputt == 3 or inputt == 4: # таск тремя цифрами
             task = event.text
             if task == "незадана)":
                 send("повезло")
@@ -65,32 +63,29 @@ for event in longpoll.listen():
                 StartKeyboard.add_line()
                 StartKeyboard.add_button('0', color=VkKeyboardColor. DEFAULT)
                 send("<номер>")
+                arr_task[inputt - 3] = str(event.text)
                 inputt += 1
-
-        elif inputt == 3 or inputt == 4 or inputt == 5:
-            arr_task[inputt - 2] = str(event.text)
-            print("hey")
-            print(f"{str(event.text)}; ")
-            inputt += 1
-            if inputt == 4:
-                print(' '.join(arr_task))
-        
-        elif inputt == 6:
+                
+        elif inputt == 5: # послед. цифра
+            arr_task[inputt - 3] = str(event.text)
+            task = int(''.join(arr_task))
             StartKeyboard = VkKeyboard(one_time=True)
             StartKeyboard.add_button('сегодня(', color=VkKeyboardColor.NEGATIVE)
             StartKeyboard.add_button('завтра', color=VkKeyboardColor.POSITIVE)
+            StartKeyboard.add_line()
             StartKeyboard.add_button('послезавтра', color=VkKeyboardColor.POSITIVE)
             StartKeyboard.add_button('другой', color=VkKeyboardColor.DEFAULT)
             send("<когда>")
             inputt += 1
             
-        elif inputt == 7:
+        elif inputt == 6: # заполнение
             inputt = 0
             date = event.text
-            d = {'done': [0], 'date': [date], 'sub': [sub], 'task': [task]}
-            df.append(d)
+            d = pd.DataFrame({'done': [0], 'date': [date], 'sub': [sub], 'task': [task]})
+            # print(d)
+            df.append(d, ignore_index = True)
+            # df = pd.DataFrame(data=d)
             print(df)
-            print('')
             
             
             
