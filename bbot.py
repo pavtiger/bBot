@@ -1,18 +1,16 @@
 import datetime
 import requests
 import vk_api
-from bs4 import BeautifulSoup
 from random import randint
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
 import pandas as pd
 
-vk_session = vk_api.VkApi(token='e77578a5c80bd6b4f8acfd48d877821dccc2443944942206420fcadc7bfb6c77744b5ebcde0cacf386fd3')
+vk_session = vk_api.VkApi(token="e77578a5c80bd6b4f8acfd48d877821dccc2443944942206420fcadc7bfb6c77744b5ebcde0cacf386fd3")
 longpoll = VkLongPoll(vk_session)
 p=1
 Exit = False
 City = ''
-greetings = ['привет', 'ку', 'здорово', 'здравствуй']
 user_old = dict()
 inputt = 0
 def send(mess):
@@ -24,11 +22,18 @@ def send(mess):
 hometask = {}
 sub = ''
 task = ''
+arr_task = [0, 0, 0]
 date = ''
+d = {'done': [], 'date': [], 'sub': [], 'task': []}
+df = pd.DataFrame(data=d)
+print(df)
 
 for event in longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
         event.text = event.text.lower()
+        if arr_task == [6, 6, 6]:
+            send("вот это повезло")
+                
         if inputt == 1:
             inputt += 1
             sub = event.text
@@ -38,19 +43,44 @@ for event in longpoll.listen():
                 StartKeyboard.add_button('упр', color=VkKeyboardColor.DEFAULT)
                 StartKeyboard.add_button('правило', color=VkKeyboardColor.DEFAULT)
             send("<задание>")
-        elif inputt == 2:
-            inputt += 1
+            
+        elif inputt == 2 or inputt == 3 or inputt == 4:
             task = event.text
-            if task == 
+            if task == "незадана)":
+                send("повезло")
+                inputt += 4
+            else:
+                StartKeyboard = VkKeyboard(one_time=True)
+                StartKeyboard.add_button('1', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('2', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('3', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_line()
+                StartKeyboard.add_button('4', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('5', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('6', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_line()
+                StartKeyboard.add_button('7', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('8', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('9', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_line()
+                StartKeyboard.add_button('0', color=VkKeyboardColor. DEFAULT)
+                send("<номер>")
+                arr_task[inputt - 2] = event.text
+                inputt += 1
+
+        elif inputt == 5:
             StartKeyboard = VkKeyboard(one_time=True)
             StartKeyboard.add_button('сегодня(', color=VkKeyboardColor.NEGATIVE)
             StartKeyboard.add_button('завтра', color=VkKeyboardColor.POSITIVE)
             StartKeyboard.add_button('послезавтра', color=VkKeyboardColor.POSITIVE)
-            StartKeyboard.add_button('другой', color=VkKeyboardColor.POSITIVE)
-        elif inputt == 3:
+            StartKeyboard.add_button('другой', color=VkKeyboardColor.DEFAULT)
+            send("<когда>")
+            inputt += 1
+            
+        elif inputt == 6:
             inputt = 0
             date = event.text
-            # hometask
+            hometask
                 
         elif event.text == 'start' or event.text == 'начать' or event.text == 'начало':
             event.text = event.text.lower()
@@ -60,7 +90,7 @@ for event in longpoll.listen():
             StartKeyboard.add_button('добавить дз', color=VkKeyboardColor.DEFAULT)
             send('хей')
             
-        elif event.text == "добавить дз":
+        elif event.text == "добавить дз" or event.text == "add":
             StartKeyboard = VkKeyboard(one_time=True)
             StartKeyboard.add_button('русский', color=VkKeyboardColor.NEGATIVE)
             StartKeyboard.add_button('алгебра', color=VkKeyboardColor.POSITIVE)
