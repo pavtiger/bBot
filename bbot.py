@@ -6,11 +6,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
 import pandas as pd
 
-<<<<<<< HEAD
-vk_session = vk_api.VkApi(token="e77578a5c80bd6b4f8acfd48d877821dccc2443944942206420fcadc7bfb6c77744b5ebcde0cacf386fd3")
-=======
 vk_session = vk_api.VkApi(token='')
->>>>>>> 85fa1168b879c3d2098ef22b3e8246fb236dcd73
 longpoll = VkLongPoll(vk_session)
 p=1
 Exit = False
