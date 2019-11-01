@@ -22,6 +22,7 @@ def send(mess):
 ind = 0
 sub = ''
 task = ''
+typee = ''
 arr_task = ['0', '0', '0']
 date = ''
 df = pd.DataFrame(columns=['done', 'date', 'sub', 'task'])
@@ -46,11 +47,20 @@ for event in longpoll.listen():
             
         elif inputt == 2 or inputt == 3 or inputt == 4: # таск тремя цифрами
             task = event.text
+            if inputt == 2:
+                typee = task
+                
             if task == "незадана)":
+                StartKeyboard = VkKeyboard(one_time=True)
+                StartKeyboard.add_button('сегодня(', color=VkKeyboardColor.NEGATIVE)
+                StartKeyboard.add_button('завтра', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_line()
+                StartKeyboard.add_button('послезавтра', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('другой', color=VkKeyboardColor.DEFAULT)
                 send("повезло")
-                inputt += 4
+                inputt += 3
             else:
-                if task == 'упр':
+                if typee == 'упр':
                     StartKeyboard = VkKeyboard(one_time=True)
                     StartKeyboard.add_button('1', color=VkKeyboardColor.POSITIVE)
                     StartKeyboard.add_button('2', color=VkKeyboardColor.POSITIVE)
@@ -66,32 +76,45 @@ for event in longpoll.listen():
                     StartKeyboard.add_line()
                     StartKeyboard.add_button('0', color=VkKeyboardColor. DEFAULT)
                     send("<номер>")
-                    arr_task[inputt - 3] = str(event.text)
+                    arr_task[inputt - 3] = str(task)
                     inputt += 1
                 else:
                     send("<введи>")
-                    inputt += 0
+                    inputt += 3
                 
         elif inputt == 5: # послед. цифра
-            if task == "упр":
+            if typee == 'упр':
                 arr_task[inputt - 3] = str(event.text)
                 task = int(''.join(arr_task))
-            StartKeyboard = VkKeyboard(one_time=True)
-            StartKeyboard.add_button('сегодня(', color=VkKeyboardColor.NEGATIVE)
-            StartKeyboard.add_button('завтра', color=VkKeyboardColor.POSITIVE)
-            StartKeyboard.add_line()
-            StartKeyboard.add_button('послезавтра', color=VkKeyboardColor.POSITIVE)
-            StartKeyboard.add_button('другой', color=VkKeyboardColor.DEFAULT)
-            send("<когда>")
-            inputt += 1
+                
+            if typee == 'незадана)':
+                inputt = 0
+                date = event.text
+                df.loc[ind] = [0, date, sub, task]
+                ind += 1
+                print(df)
+                print('')
+                StartKeyboard = VkKeyboard(one_time=True)
+                StartKeyboard.add_button('посмотреть дз', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('добавить дз', color=VkKeyboardColor.DEFAULT)
+                send("готово")
+            else:
+                StartKeyboard = VkKeyboard(one_time=True)
+                StartKeyboard.add_button('сегодня(', color=VkKeyboardColor.NEGATIVE)
+                StartKeyboard.add_button('завтра', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_line()
+                StartKeyboard.add_button('послезавтра', color=VkKeyboardColor.POSITIVE)
+                StartKeyboard.add_button('другой', color=VkKeyboardColor.DEFAULT)
+                send("<когда>")
+                inputt += 1
             
         elif inputt == 6: # заполнение
             inputt = 0
             date = event.text
-            # d = pd.DataFrame({'done': [0], 'date': [date], 'sub': [sub], 'task': [task]})
             df.loc[ind] = [0, date, sub, task]
             ind += 1
             print(df)
+            print('')
             
             StartKeyboard = VkKeyboard(one_time=True)
             StartKeyboard.add_button('посмотреть дз', color=VkKeyboardColor.POSITIVE)
@@ -120,6 +143,8 @@ for event in longpoll.listen():
             StartKeyboard.add_button('другой вариант', color=VkKeyboardColor.DEFAULT)
             send("<предмет>")
             inputt = 1
+            
+            
             
         elif event.text == "посмотреть дз" or event.text == "hw":
             StartKeyboard = VkKeyboard(one_time=True)
