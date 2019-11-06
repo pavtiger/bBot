@@ -5,10 +5,12 @@ from random import randint
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import VkLongPoll, VkEventType
 import pandas as pd
+from twilio.rest import Client
 
 vk_session = vk_api.VkApi(token='')
 longpoll = VkLongPoll(vk_session)
-p=1
+p = 1
+s = False
 Exit = False
 City = ''
 user_old = dict()
@@ -18,6 +20,22 @@ def send(mess):
         user_id=event.user_id,
         keyboard=StartKeyboard.get_keyboard(),
         message=mess, random_id=randint(0, 214748647))
+
+
+account_sid = 'AC1defc3f87d049509c6cb352fdc8d9a9f'
+auth_token = 'c2d965531c333e1d5ab984b0c79d4d1e'
+client = Client(account_sid, auth_token)
+
+def sms(text):
+    message = client.messages \
+        .create(
+            body=str(text),
+            from_='+12012672118',
+            to='+79150599190'
+        )
+
+    print(f"sent message: {message.sid}")
+
 
 ind = 0
 sub = ''
@@ -151,6 +169,20 @@ for event in longpoll.listen():
             for key in hometask.keys():
                 StartKeyboard.add_button(hometask[key], color=VkKeyboardColor.POSITIVE)
             send('вотъ')
+            
+        elif event.text == "python" or s == True:
+            if s:
+                s = False
+                sms(event.text)
+            else:
+                send('<text>')
+                sms('python')
+                s = True
+            
+        elif event.text == "send"
+            
+        elif event.text == "sound":
+            sms('sound')
             
         else:
             send("error")
